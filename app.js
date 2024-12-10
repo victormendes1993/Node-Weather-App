@@ -1,10 +1,27 @@
-import axios from 'axios'
+import geocode from './utils/geocode.js'
+import forecast from './utils/forecast.js'
 
-const url = 'https://api.weatherstack.com/current?access_key=2cfe25ab2cb0936210c0ed06a573d6ea&query=linhares'
+const query = process.argv[2] ?? ''
 
-axios.get(url)
-    .then(response => {
-        //response - The full Axios response object with metadata.
-        //response.data - The parsed response body (JavaScript object for JSON responses).
-        console.log(response.data.location)
-    });
+if (!query) {
+    console.log('Query is empty. Please provide a location.')
+} else {
+
+    geocode(query, (error, { lat: latitude, lon: longitude, location } = {}) => {
+        if (error) {
+            return console.log(`Error: ${error}`)
+        }
+
+        console.log(latitude)
+        console.log(longitude)
+
+        forecast(latitude, longitude, (error, forecastDescription) => {
+            if (error) {
+                return console.log(`Error: ${error}`)
+            }
+            console.log(location)
+            console.log(forecastDescription)
+        })
+    })
+
+}
